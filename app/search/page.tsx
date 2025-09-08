@@ -1,8 +1,10 @@
 'use client'
 
+export const dynamic = 'force-dynamic' // prevent static prerender errors
+
 import { Header } from '@/components/Header'
 import { useSearchParams, useRouter } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, Suspense } from 'react'
 import axios from 'axios'
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL
@@ -13,7 +15,7 @@ interface UserResult {
   avatar_url?: string
 }
 
-export default function SearchContent() {
+function SearchContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const query = searchParams.get('query') || ''
@@ -108,5 +110,13 @@ export default function SearchContent() {
         </ul>
       </div>
     </div>
+  )
+}
+
+export default function SearchPage() {
+  return (
+    <Suspense fallback={<div style={{ color: '#000', paddingTop: '80px' }}>Loading search...</div>}>
+      <SearchContent />
+    </Suspense>
   )
 }
